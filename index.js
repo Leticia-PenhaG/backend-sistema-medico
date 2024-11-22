@@ -3,8 +3,8 @@ const sequelize = require('./config/database');
 const app = express();
 const Paciente = require("./models/Paciente");
 const Medico = require("./models/Medico"); 
-const pacienteRoutes = require("./routes/pacientes");
-const medicoRoutes = require("./routes/medicos"); 
+const pacienteRoutes = require("./routes/Pacientes");
+const medicoRoutes = require("./routes/Medicos"); 
 
 app.use("/api/pacientes", pacienteRoutes);
 app.use("/api/medicos", medicoRoutes); 

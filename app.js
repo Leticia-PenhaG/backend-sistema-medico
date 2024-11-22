@@ -4,6 +4,7 @@ const app = express();
 const bodyParser = require('body-parser');
 const clinicalRecordsRoutes = require('./routes/clinicalRecords');
 
+// Middleware
 app.use(bodyParser.json()); 
 
 app.use('/api', clinicalRecordsRoutes);
