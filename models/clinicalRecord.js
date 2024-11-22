@@ -1,38 +1,35 @@
-const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = require('../config/database'); 
+const { Model, DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
+const Patient = require('./Patient'); 
+const Doctor = require('./Doctor');  
 
-const ClinicalRecord = sequelize.define('ClinicalRecord', {
-  patientId: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: 'Patients', 
-      key: 'id',
+class ClinicalRecord extends Model {}
+
+ClinicalRecord.init(
+  {
+    
+    diagnosis: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    treatment: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    appointmentDate: {
+      type: DataTypes.DATE,
+      allowNull: false,
     },
   },
-  doctorId: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: 'Doctors', 
-      key: 'id',
-    },
-  },
-  diagnosis: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  treatment: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  appointmentDate: {
-    type: DataTypes.DATE,
-    allowNull: false,
-  },
-}, {
-  tableName: 'clinical_records',
-  timestamps: true, 
-});
+  {
+    sequelize,
+    modelName: 'ClinicalRecord',
+    tableName: 'clinical_records', 
+  }
+);
+
+
+ClinicalRecord.belongsTo(Patient, { foreignKey: 'patientId', as: 'patient' });
+ClinicalRecord.belongsTo(Doctor, { foreignKey: 'doctorId', as: 'doctor' });
 
 module.exports = ClinicalRecord;
