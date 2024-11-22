@@ -7,6 +7,7 @@ const clinicalRecordsRoutes = require('./routes/clinicalRecords');
 // Middleware
 app.use(bodyParser.json()); 
 
+// Usar las rutas para las fichas clínicas
 app.use('/api', clinicalRecordsRoutes);
 
 const PORT = process.env.PORT || 3000;
@@ -17,13 +18,13 @@ app.listen(PORT, () => {
 
 const express = require('express');
 const cors = require('cors');
-const fichasClinicasRouter = require('./rutas/fichasClinicas');
+const fichasClinicasRouter = require('./rutas/fichasClinicasRoutes');
 
 const app = express();
 app.use(cors()); 
 app.use(express.json()); 
 
-app.use('/api/fichas-clinicas', fichasClinicasRouter);
+app.use('/api', clinicalRecordsRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

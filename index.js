@@ -12,7 +12,6 @@ app.use("/api/medicos", medicoRoutes);
 // Middlewares
 app.use(express.json());
 
-// Rutas (agrega los endpoints)
 app.get('/', (req, res) => res.send('¡Bienvenido al sistema médico!'));
 
 
