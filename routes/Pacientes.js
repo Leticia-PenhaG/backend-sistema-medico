@@ -34,10 +34,21 @@ router.get("/:id", async (req, res) => {
 });
 
 // Actualizar un paciente
-router.put("/:id", async (req, res) => {
+/*router.put("/:id", async (req, res) => {
     try {
         const paciente = await Paciente.update(req.body, { where: { id: req.params.id } });
         res.status(200).json({ message: "Paciente actualizado" });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});*/
+router.put("/:id", async (req, res) => {
+    try {
+        const [rowsUpdated] = await Paciente.update(req.body, { where: { id: req.params.id } });
+        if (!rowsUpdated) return res.status(404).json({ error: "Paciente no encontrado" });
+
+        const updatedPaciente = await Paciente.findByPk(req.params.id);
+        res.status(200).json(updatedPaciente);
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
