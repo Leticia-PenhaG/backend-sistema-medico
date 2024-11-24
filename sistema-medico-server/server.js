@@ -17,4 +17,18 @@ app.listen(PORT,(err)=>{
     console.log(`Servidor corriendo en http://localhost:${PORT}`);
 })
 
+const pool = new postgresPool({
+    user:"postgres",
+    password:"12345678",
+    database:"sistema_medico",
+    host:"localhost",
+    port:5432,
+    max:10
+})
+
+pool.connect((err, connection)=>{ 
+    if(err) throw err;
+    console.log(`Conexión correcta a sistema_medico database`);
+})
+
 
