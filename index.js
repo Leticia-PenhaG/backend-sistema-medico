@@ -29,7 +29,7 @@ sequelize.sync({ force: false })
         console.error('Error al sincronizar Sequelize:', err);
     });*/
 
-const express = require('express');
+/*const express = require('express');
 const cors = require('cors');
 const sequelize = require('./config/database');
 const pacienteRoutes = require("./routes/Pacientes");
@@ -41,7 +41,33 @@ app.use(express.json());
 // Rutas
 app.use("/api/pacientes", pacienteRoutes);
 
-app.get('/', (req, res) => res.send('¡Bienvenido al sistema médico!'));
+app.get('/', (req, res) => res.send('¡Bienvenido al SISTEMA médico!'));
+
+// Inicialización del servidor
+const PORT = process.env.PORT || 5000;
+sequelize.sync({ force: false })
+    .then(() => {
+        console.log('Base de datos sincronizada.');
+        app.listen(PORT, () => {
+            console.log(`Servidor corriendo en http://localhost:${PORT}`);
+        });
+    })
+    .catch(err => console.error('Error al sincronizar Sequelize:', err));*/
+
+
+    const express = require('express');
+const cors = require('cors');
+const sequelize = require('./config/database');
+const pacienteRoutes = require("./routes/Pacientes"); // Importar las rutas de pacientes
+
+const app = express();
+app.use(cors());
+app.use(express.json()); // Middleware para procesar JSON
+
+// Rutas
+app.use("/api/pacientes", pacienteRoutes);
+
+app.get('/', (req, res) => res.send('¡Bienvenido al SISTEMA médico!'));
 
 // Inicialización del servidor
 const PORT = process.env.PORT || 5000;
@@ -53,3 +79,4 @@ sequelize.sync({ force: false })
         });
     })
     .catch(err => console.error('Error al sincronizar Sequelize:', err));
+

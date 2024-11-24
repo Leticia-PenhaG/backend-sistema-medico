@@ -2,15 +2,42 @@ const express = require("express");
 const router = express.Router();
 const Paciente = require("../models/Paciente");
 
+const { check, validationResult } = require("express-validator");
+
+router.post(
+  "/",
+  [
+    check("nombre").notEmpty().withMessage("El nombre es obligatorio."),
+    check("apellido").notEmpty().withMessage("El apellido es obligatorio."),
+    check("cedula").notEmpty().withMessage("La cédula es obligatoria."),
+    check("email").isEmail().withMessage("Debe ser un correo válido."),
+    check("telefono").notEmpty().withMessage("El teléfono es obligatorio."),
+    check("fechaNacimiento").isDate().withMessage("Debe ser una fecha válida."),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errores: errors.array() });
+    }
+
+    try {
+      const paciente = await Paciente.create(req.body);
+      res.status(201).json(paciente);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+);
+
 // Crear un paciente
-router.post("/", async (req, res) => {
+/*router.post("/", async (req, res) => {
     try {
         const paciente = await Paciente.create(req.body);
         res.status(201).json(paciente);
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
-});
+});*/
 
 // Obtener todos los pacientes
 router.get("/", async (req, res) => {
