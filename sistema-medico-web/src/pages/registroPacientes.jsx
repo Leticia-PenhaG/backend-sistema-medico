@@ -216,7 +216,7 @@ const RegistroPacientes = () => {
                   <TableCell>{paciente.cedula}</TableCell>
                   <TableCell>{paciente.email}</TableCell>
                   <TableCell>{paciente.telefono}</TableCell>
-                  <TableCell>{paciente.fechaNacimiento}</TableCell> 
+                  <TableCell>{new Date(paciente.fechanacimiento).toLocaleDateString()}</TableCell>
                   <TableCell>
                     <Box sx={{ display: "flex", gap: 1 }}>
                       <Button
