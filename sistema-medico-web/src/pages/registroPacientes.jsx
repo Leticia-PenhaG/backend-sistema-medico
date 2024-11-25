@@ -22,11 +22,13 @@ const RegistroPacientes = () => {
     cedula: "",
     email: "",
     telefono: "",
-    fechanacimiento: "",
+    fechaNacimiento: "",
   });
   const [search, setSearch] = useState("");
+  const [isEditing, setIsEditing] = useState(false); 
+  const [editId, setEditId] = useState(null); 
 
-  // Función para obtener pacientes
+  // Obtener pacientes
   const fetchPacientes = async () => {
     try {
       const response = await axios.get("http://localhost:3000/pacientes");
@@ -40,23 +42,30 @@ const RegistroPacientes = () => {
     fetchPacientes();
   }, []);
 
-  // Función para manejar cambios en los campos del formulario
+  // Manejar cambios en el formulario
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-
-  //Registro de pacientes
+  // Registrar o actualizar pacientes
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     try {
-      const response = await axios.post(
-        "http://localhost:3000/pacientes",
-        formData
-      );
-      console.log("Paciente registrado:", response.data);
-  
+      if (isEditing) {
+        const response = await axios.patch(
+          `http://localhost:3000/pacientes/${editId}`,
+          formData
+        );
+        alert(`Paciente actualizado: ${response.data.nombre} ${response.data.apellido}`);
+      } else {
+        const response = await axios.post(
+          "http://localhost:3000/pacientes",
+          formData
+        );
+        alert(`Paciente registrado: ${response.data.nombre} ${response.data.apellido}`);
+      }
+
       // Limpiar formulario y recargar pacientes
       setFormData({
         nombre: "",
@@ -66,17 +75,28 @@ const RegistroPacientes = () => {
         telefono: "",
         fechaNacimiento: "",
       });
+      setIsEditing(false);
+      setEditId(null);
       fetchPacientes();
     } catch (error) {
-      console.error("Error al registrar paciente:", error.response?.data || error.message);
+      console.error(
+        "Error al guardar paciente:",
+        error.response?.data || error.message
+      );
       alert(
-        `No se pudo registrar el paciente. Motivo: ${
-          error.response?.data || "Error desconocido, revisa la consola para más detalles."
+        `No se pudo guardar el paciente. Motivo: ${
+          error.response?.data ||
+          "Error desconocido, revisa la consola para más detalles."
         }`
       );
     }
   };
-  
+
+  const handleEdit = (paciente) => {
+    setFormData(paciente);
+    setIsEditing(true);
+    setEditId(paciente.id);
+  };
 
   const handleDelete = async (id) => {
     try {
@@ -93,7 +113,9 @@ const RegistroPacientes = () => {
         Registro de Pacientes
       </Typography>
       <Paper sx={{ padding: 2, marginBottom: 3 }}>
-        <Typography variant="h6">Registrar Paciente</Typography>
+        <Typography variant="h6">
+          {isEditing ? "Editar Paciente" : "Registrar Paciente"}
+        </Typography>
         <form onSubmit={handleSubmit}>
           <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
             <TextField
@@ -138,14 +160,14 @@ const RegistroPacientes = () => {
               fullWidth
             />
             <TextField
-            label="Fecha de Nacimiento"
-            name="fechaNacimiento" 
-            type="date"
-            value={formData.fechaNacimiento}
-            onChange={handleChange}
-            required
-            InputLabelProps={{ shrink: true }}
-            fullWidth
+              label="Fecha de Nacimiento"
+              name="fechaNacimiento"
+              type="date"
+              value={formData.fechaNacimiento}
+              onChange={handleChange}
+              required
+              InputLabelProps={{ shrink: true }}
+              fullWidth
             />
           </Box>
           <Button
@@ -154,7 +176,7 @@ const RegistroPacientes = () => {
             color="primary"
             sx={{ marginTop: 2 }}
           >
-            Registrar Paciente
+            {isEditing ? "Actualizar Paciente" : "Registrar Paciente"}
           </Button>
         </form>
       </Paper>
@@ -194,15 +216,24 @@ const RegistroPacientes = () => {
                   <TableCell>{paciente.cedula}</TableCell>
                   <TableCell>{paciente.email}</TableCell>
                   <TableCell>{paciente.telefono}</TableCell>
-                  <TableCell>{paciente.fechanacimiento}</TableCell>
+                  <TableCell>{paciente.fechaNacimiento}</TableCell> 
                   <TableCell>
-                    <Button
-                      variant="outlined"
-                      color="error"
-                      onClick={() => handleDelete(paciente.id)}
-                    >
-                      Eliminar
-                    </Button>
+                    <Box sx={{ display: "flex", gap: 1 }}>
+                      <Button
+                        variant="outlined"
+                        color="primary"
+                        onClick={() => handleEdit(paciente)}
+                      >
+                        Editar
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        color="error"
+                        onClick={() => handleDelete(paciente.id)}
+                      >
+                        Eliminar
+                      </Button>
+                    </Box>
                   </TableCell>
                 </TableRow>
               ))}
