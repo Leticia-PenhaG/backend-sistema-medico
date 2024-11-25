@@ -1,112 +1,62 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const pool = require("../server"); 
+const { Paciente } = require('../models');
 
 // Obtener todos los pacientes
-router.get("/", async (req, res) => {
-    const sql = "SELECT * FROM pacientes";
-    try {
-        const result = await req.db.query(sql);
-        res.status(200).json(result.rows);
-    } catch (error) {
-        console.error("Error al obtener pacientes:", error);
-        res.status(500).send("Error al obtener la lista de pacientes.");
-    }
+router.get('/', async (req, res) => {
+  try {
+    const pacientes = await Paciente.findAll();
+    res.json(pacientes);
+  } catch (err) {
+    res.status(500).json({ error: 'Error al obtener los pacientes' });
+  }
+});
+
+// Crear un paciente
+router.post('/', async (req, res) => {
+  try {
+    const paciente = await Paciente.create(req.body);
+    res.status(201).json(paciente);
+  } catch (err) {
+    res.status(400).json({ error: 'Error al crear el paciente', details: err });
+  }
 });
 
 // Obtener un paciente por ID
-router.get("/:id", async (req, res) => {
-    const pacienteId = parseInt(req.params.id, 10);
-
-    if (isNaN(pacienteId)) {
-        return res.status(400).send("El ID debe ser un número válido.");
-    }
-
-    const sql = "SELECT * FROM pacientes WHERE id = $1";
-    try {
-        const result = await req.db.query(sql, [pacienteId]);
-        if (result.rows.length === 0) {
-            return res.status(404).send("Paciente no encontrado.");
-        }
-        res.status(200).json(result.rows[0]);
-    } catch (error) {
-        console.error("Error al obtener el paciente:", error);
-        res.status(500).send("Error al obtener el paciente.");
-    }
+router.get('/:id', async (req, res) => {
+  try {
+    const paciente = await Paciente.findByPk(req.params.id);
+    if (!paciente) return res.status(404).json({ error: 'Paciente no encontrado' });
+    res.json(paciente);
+  } catch (err) {
+    res.status(500).json({ error: 'Error al obtener el paciente' });
+  }
 });
 
-// Crear un nuevo paciente
-router.post("/", async (req, res) => {
-    console.log("Datos recibidos:", req.body);
-    const { nombre, apellido, cedula, email, telefono, fechaNacimiento } = req.body;
+// Actualizar un paciente
+router.put('/:id', async (req, res) => {
+  try {
+    const paciente = await Paciente.findByPk(req.params.id);
+    if (!paciente) return res.status(404).json({ error: 'Paciente no encontrado' });
 
-    if (!nombre || !apellido || !cedula || !email || !telefono || !fechaNacimiento) {
-        return res.status(400).send("Todos los campos son obligatorios.");
-    }
-
-    const sql = `
-        INSERT INTO pacientes (nombre, apellido, cedula, email, telefono, fechaNacimiento)
-        VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`;
-
-    try {
-        const result = await req.db.query(sql, [nombre, apellido, cedula, email, telefono, fechaNacimiento]);
-        res.status(201).json(result.rows[0]);
-    } catch (error) {
-        console.error("Error al crear el paciente:", error);
-        res.status(500).send("Error al crear el paciente.");
-    }
+    await paciente.update(req.body);
+    res.json(paciente);
+  } catch (err) {
+    res.status(400).json({ error: 'Error al actualizar el paciente', details: err });
+  }
 });
 
-// Actualizar un paciente por ID
-router.patch("/:id", async (req, res) => {
-    const pacienteId = parseInt(req.params.id, 10);
+// Eliminar un paciente
+router.delete('/:id', async (req, res) => {
+  try {
+    const paciente = await Paciente.findByPk(req.params.id);
+    if (!paciente) return res.status(404).json({ error: 'Paciente no encontrado' });
 
-    if (isNaN(pacienteId)) {
-        return res.status(400).send("El ID debe ser un número válido.");
-    }
-
-    const { nombre, apellido, cedula, email, telefono, fechaNacimiento } = req.body;
-
-    if (!nombre || !apellido || !cedula || !email || !telefono || !fechaNacimiento) {
-        return res.status(400).send("Todos los campos son obligatorios para la actualización.");
-    }
-
-    const sql = `
-        UPDATE pacientes 
-        SET nombre = $1, apellido = $2, cedula = $3, email = $4, telefono = $5, fechaNacimiento = $6 
-        WHERE id = $7 RETURNING *`;
-
-    try {
-        const result = await req.db.query(sql, [nombre, apellido, cedula, email, telefono, fechaNacimiento, pacienteId]);
-        if (result.rowCount === 0) {
-            return res.status(404).send("Paciente no encontrado.");
-        }
-        res.status(200).json(result.rows[0]);
-    } catch (error) {
-        console.error("Error al actualizar el paciente:", error);
-        res.status(500).send("Error al actualizar el paciente.");
-    }
-});
-
-// Eliminar un paciente por ID
-router.delete("/:id", async (req, res) => {
-    const pacienteId = parseInt(req.params.id, 10);
-
-    if (isNaN(pacienteId)) {
-        return res.status(400).send("El ID debe ser un número válido.");
-    }
-
-    const sql = "DELETE FROM pacientes WHERE id = $1 RETURNING *";
-    try {
-        const result = await req.db.query(sql, [pacienteId]);
-        if (result.rowCount === 0) {
-            return res.status(404).send("Paciente no encontrado.");
-        }
-        res.status(200).send(`El paciente con ID ${pacienteId} fue eliminado con éxito.`);
-    } catch (error) {
-        console.error("Error al eliminar el paciente:", error);
-        res.status(500).send("Error al eliminar el paciente.");
-    }
+    await paciente.destroy();
+    res.status(204).send();
+  } catch (err) {
+    res.status(500).json({ error: 'Error al eliminar el paciente' });
+  }
 });
 
 module.exports = router;
