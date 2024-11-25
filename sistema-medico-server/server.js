@@ -32,7 +32,6 @@ app.listen(PORT, () => {
 });
 
 // --- Endpoints ---
-
 // Obtener todos los pacientes
 app.get("/pacientes", async (req, res) => {
     const sql = "SELECT * FROM pacientes";
@@ -66,8 +65,8 @@ app.get("/pacientes/:id", async (req, res) => {
     }
 });
 
-// Crear un nuevo paciente
 app.post("/pacientes", async (req, res) => {
+    console.log("Datos recibidos:", req.body); 
     const { nombre, apellido, cedula, email, telefono, fechaNacimiento } = req.body;
 
     if (!nombre || !apellido || !cedula || !email || !telefono || !fechaNacimiento) {
@@ -86,7 +85,6 @@ app.post("/pacientes", async (req, res) => {
         res.status(500).send("Error al crear el paciente.");
     }
 });
-
 
 // Actualizar un paciente por ID
 app.patch("/pacientes/:id", async (req, res) => {

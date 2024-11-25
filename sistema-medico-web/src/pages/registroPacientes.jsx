@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   TextField,
   Button,
@@ -22,7 +22,7 @@ const RegistroPacientes = () => {
     cedula: "",
     email: "",
     telefono: "",
-    fechaNacimiento: "",
+    fechanacimiento: "",
   });
   const [search, setSearch] = useState("");
 
@@ -45,11 +45,19 @@ const RegistroPacientes = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Registrar un nuevo paciente
+
+  //Registro de pacientes
   const handleSubmit = async (e) => {
     e.preventDefault();
+  
     try {
-      await axios.post("http://localhost:4000/pacientes", formData);
+      const response = await axios.post(
+        "http://localhost:3000/pacientes",
+        formData
+      );
+      console.log("Paciente registrado:", response.data);
+  
+      // Limpiar formulario y recargar pacientes
       setFormData({
         nombre: "",
         apellido: "",
@@ -60,14 +68,19 @@ const RegistroPacientes = () => {
       });
       fetchPacientes();
     } catch (error) {
-      console.error("Error al registrar paciente:", error);
+      console.error("Error al registrar paciente:", error.response?.data || error.message);
+      alert(
+        `No se pudo registrar el paciente. Motivo: ${
+          error.response?.data || "Error desconocido, revisa la consola para más detalles."
+        }`
+      );
     }
   };
-
+  
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:4000/pacientes/${id}`);
+      await axios.delete(`http://localhost:3000/pacientes/${id}`);
       fetchPacientes();
     } catch (error) {
       console.error("Error al eliminar paciente:", error);
@@ -125,14 +138,14 @@ const RegistroPacientes = () => {
               fullWidth
             />
             <TextField
-              label="Fecha de Nacimiento"
-              name="fechaNacimiento"
-              type="date"
-              value={formData.fechaNacimiento}
-              onChange={handleChange}
-              required
-              InputLabelProps={{ shrink: true }}
-              fullWidth
+            label="Fecha de Nacimiento"
+            name="fechaNacimiento" 
+            type="date"
+            value={formData.fechaNacimiento}
+            onChange={handleChange}
+            required
+            InputLabelProps={{ shrink: true }}
+            fullWidth
             />
           </Box>
           <Button
@@ -181,7 +194,7 @@ const RegistroPacientes = () => {
                   <TableCell>{paciente.cedula}</TableCell>
                   <TableCell>{paciente.email}</TableCell>
                   <TableCell>{paciente.telefono}</TableCell>
-                  <TableCell>{paciente.fechaNacimiento}</TableCell>
+                  <TableCell>{paciente.fechanacimiento}</TableCell>
                   <TableCell>
                     <Button
                       variant="outlined"
