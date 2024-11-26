@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { Paciente } = require('../models');
 const { parseISO, isValid } = require('date-fns');
+const { format } = require('date-fns');
 
 // Obtener todos los pacientes
 router.get('/', async (req, res) => {
@@ -53,45 +54,51 @@ router.get('/:id', async (req, res) => {
 router.patch('/:id', async (req, res) => {
   try {
     const pacienteId = parseInt(req.params.id, 10);
+    console.log("ID recibido para actualizar:", pacienteId); // Log del ID
 
-    // Validar si el ID es un número válido
     if (isNaN(pacienteId)) {
       return res.status(400).json({ error: 'El ID debe ser un número válido.' });
     }
 
-    // Buscar el paciente por ID
     const paciente = await Paciente.findByPk(pacienteId);
-
     if (!paciente) {
       return res.status(404).json({ error: 'Paciente no encontrado.' });
     }
 
-    // Obtener datos del cuerpo de la solicitud
+    console.log("Datos recibidos para actualizar:", req.body); // Log de los datos recibidos
+
     const { nombre, apellido, cedula, email, telefono, fechaNacimiento } = req.body;
+    const fechaNacimientoValida =
+      fechaNacimiento && isValid(parseISO(fechaNacimiento))
+        ? parseISO(fechaNacimiento)
+        : undefined;
 
-    // Crear un objeto con los campos actualizados
-    const updateData = {};
-    if (nombre) updateData.nombre = nombre;
-    if (apellido) updateData.apellido = apellido;
-    if (cedula) updateData.cedula = cedula;
-    if (email) updateData.email = email;
-    if (telefono) updateData.telefono = telefono;
-    if (fechaNacimiento) updateData.fechaNacimiento = fechaNacimiento;
+    const camposActualizables = {
+      ...(nombre && { nombre }),
+      ...(apellido && { apellido }),
+      ...(cedula && { cedula }),
+      ...(email && { email }),
+      ...(telefono && { telefono }),
+      ...(fechaNacimientoValida && { fechaNacimiento: fechaNacimientoValida }),
+    };
 
-    // Actualizar el paciente
-    const updatedPaciente = await paciente.update(updateData);
+    if (Object.keys(camposActualizables).length === 0) {
+      return res
+        .status(400)
+        .json({ error: 'No se proporcionaron datos para actualizar.' });
+    }
+
+    await paciente.update(camposActualizables);
 
     res.status(200).json({
       message: 'Paciente actualizado con éxito.',
-      data: updatedPaciente,
+      data: paciente,
     });
   } catch (error) {
     console.error('Error al actualizar el paciente:', error);
     res.status(500).json({ error: 'Error al actualizar el paciente.' });
   }
 });
-
-
 
 
 // Eliminar un paciente

@@ -50,7 +50,7 @@ const RegistroPacientes = () => {
   // Registrar o actualizar pacientes
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     try {
       if (isEditing) {
         const response = await axios.patch(
@@ -65,8 +65,7 @@ const RegistroPacientes = () => {
         );
         alert(`Paciente registrado: ${response.data.nombre} ${response.data.apellido}`);
       }
-
-      // Limpiar formulario y recargar pacientes
+  
       setFormData({
         nombre: "",
         apellido: "",
@@ -85,13 +84,12 @@ const RegistroPacientes = () => {
       );
       alert(
         `No se pudo guardar el paciente. Motivo: ${
-          error.response?.data ||
-          "Error desconocido, revisa la consola para más detalles."
+          error.response?.data || "Error desconocido, revisa la consola para más detalles."
         }`
       );
     }
   };
-
+  
   const handleEdit = (paciente) => {
     setFormData(paciente);
     setIsEditing(true);
