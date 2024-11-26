@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 
-const RegistroMedicos = () => {
+const RegistroMedico = () => {
   const [medicos, setMedicos] = useState([]);
   const [formData, setFormData] = useState({
     nombre: "",
@@ -225,4 +225,4 @@ const RegistroMedicos = () => {
   );
 };
 
-export default RegistroMedicos;
+export default RegistroMedico;
