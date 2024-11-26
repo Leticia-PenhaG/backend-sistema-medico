@@ -57,7 +57,11 @@ const RegistroPacientes = () => {
           `http://localhost:3000/pacientes/${editId}`,
           formData
         );
-        alert(`Paciente actualizado: ${response.data.nombre} ${response.data.apellido}`);
+        if (response.status === 200) {
+          alert("Paciente actualizado con éxito!");
+        } else {
+          alert("No se pudo actualizar el paciente.");
+        }
       } else {
         const response = await axios.post(
           "http://localhost:3000/pacientes",
