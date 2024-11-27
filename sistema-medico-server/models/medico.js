@@ -17,22 +17,29 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-          isIn: [[
-              'Pediatra', 'Dermatólogo', 'Clínico', 'Cardiólogo', 
-              'Neurólogo', 'Oftalmólogo', 'Ginecólogo', 'Cirujano General',
-              'Oncólogo', 'Psiquiatra', 'Radiólogo', 'Ortopedista',
-              'Endocrinólogo', 'Reumatólogo', 'Infectólogo'
-          ]],
+        isIn: [[
+                'Pediatra', 'Dermatólogo', 'Clínico', 'Cardiólogo', 
+                'Neurólogo', 'Oftalmólogo', 'Ginecólogo', 'Cirujano General',
+                'Oncólogo', 'Psiquiatra', 'Radiólogo', 'Ortopedista',
+                'Endocrinólogo', 'Reumatólogo', 'Infectólogo'
+            ]],
       },
-  },
+    },
     username: {
       type: DataTypes.STRING,
       unique: true,
     },
     password: DataTypes.STRING,
   }, {});
-  Medico.associate = function(models) {
-    Medico.hasMany(models.Ficha, { foreignKey: 'medico_id' });
+
+  // Asociación con el modelo FichaClinica
+  Medico.associate = (models) => {
+    Medico.hasMany(models.FichaClinica, {
+      foreignKey: 'medicoId',
+      as: 'fichas',
+    });
   };
+
   return Medico;
 };
+

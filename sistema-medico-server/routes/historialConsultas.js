@@ -1,11 +1,12 @@
-// routes/historialConsultas.js
 const express = require('express');
 const router = express.Router();
-const { FichaClinica } = require('../models');
+const { FichaClinica, Paciente, Medico } = require('../models');
+const { Op } = require('sequelize');
 
 // Obtener historial de consultas con filtros
 router.get('/', async (req, res) => {
-  const { pacienteId, medicoId, fechaInicio, fechaFin, especialidad } = req.query;
+  const { pacienteId, medicoId, fechaInicio, fechaFin } = req.query;
+
   try {
     const fichas = await FichaClinica.findAll({
       where: {
@@ -16,9 +17,10 @@ router.get('/', async (req, res) => {
       },
       include: ['paciente', 'medico'],
     });
+
     res.json(fichas);
   } catch (err) {
-    res.status(500).json({ error: 'Error al obtener el historial de consultas' });
+    res.status(500).json({ error: 'Error al obtener el historial clínico', details: err });
   }
 });
 

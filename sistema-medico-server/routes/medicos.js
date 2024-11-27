@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { Medico } = require('../models');
+const { isValid, parseISO } = require('date-fns');
 
 // Obtener todos los médicos
 router.get('/', async (req, res) => {
@@ -15,13 +16,27 @@ router.get('/', async (req, res) => {
 // Crear un médico
 router.post('/', async (req, res) => {
   try {
-    const { nombre, apellido, cedula, email, telefono, fechaNacimiento, especialidad, usuario, contrasena } = req.body;
+    const { nombre, apellido, cedula, email, telefono, fechaNacimiento, especialidad, username, password } = req.body;
+
+    const fechaNacimientoValida = fechaNacimiento && isValid(parseISO(fechaNacimiento))
+      ? parseISO(fechaNacimiento)
+      : null;
+
     const medico = await Medico.create({
-      nombre, apellido, cedula, email, telefono, fechaNacimiento, especialidad, usuario, contrasena
+      nombre,
+      apellido,
+      cedula,
+      email,
+      telefono,
+      fechaNacimiento: fechaNacimientoValida,
+      especialidad,
+      username,
+      password,
     });
+
     res.status(201).json(medico);
   } catch (err) {
-    res.status(400).json({ error: 'Error al crear el médico' });
+    res.status(400).json({ error: 'Error al crear el médico', details: err });
   }
 });
 
@@ -42,10 +57,21 @@ router.patch('/:id', async (req, res) => {
     const medico = await Medico.findByPk(req.params.id);
     if (!medico) return res.status(404).json({ error: 'Médico no encontrado' });
 
-    await medico.update(req.body);
+    const { fechaNacimiento } = req.body;
+    const fechaNacimientoValida = fechaNacimiento && isValid(parseISO(fechaNacimiento))
+      ? parseISO(fechaNacimiento)
+      : undefined;
+
+    const camposActualizables = {
+      ...req.body,
+      ...(fechaNacimientoValida && { fechaNacimiento: fechaNacimientoValida }),
+    };
+
+    await medico.update(camposActualizables);
+
     res.status(200).json({ message: 'Médico actualizado con éxito', data: medico });
   } catch (err) {
-    res.status(500).json({ error: 'Error al actualizar el médico' });
+    res.status(500).json({ error: 'Error al actualizar el médico', details: err });
   }
 });
 
@@ -58,9 +84,8 @@ router.delete('/:id', async (req, res) => {
     await medico.destroy();
     res.status(204).send();
   } catch (err) {
-    res.status(500).json({ error: 'Error al eliminar el médico' });
+    res.status(500).json({ error: 'Error al eliminar el médico', details: err });
   }
 });
 
 module.exports = router;
-

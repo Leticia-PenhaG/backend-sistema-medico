@@ -37,8 +37,12 @@ app.use((req, res, next) => {
 });
 
 // Rutas
-const pacientesRouter = require("./routes/pacientes"); // Asegúrate de que este archivo existe y funciona
+const pacientesRouter = require("./routes/pacientes"); 
 app.use("/pacientes", pacientesRouter);
+const medicosRoutes = require("./routes/medicos"); 
+app.use("/medicos", medicosRoutes);
+const fichaRoutes = require("./routes/fichasClinicas"); 
+app.use("/fichasClinicas", fichaRoutes);
 
 // Iniciar el servidor
 app.listen(PORT, () => {

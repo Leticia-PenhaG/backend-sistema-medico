@@ -11,18 +11,42 @@ import {
   TableRow,
   TableCell,
   TableBody,
+  MenuItem,
+  Select,
+  InputLabel,
+  FormControl
 } from "@mui/material";
 import axios from "axios";
 
 const RegistroMedico = () => {
+  const especialidades = [
+    "Pediatra",
+    "Dermatólogo",
+    "Clínico",
+    "Cardiólogo",
+    "Neurólogo",
+    "Oftalmólogo",
+    "Ginecólogo",
+    "Cirujano General",
+    "Oncólogo",
+    "Psiquiatra",
+    "Radiólogo",
+    "Ortopedista",
+    "Endocrinólogo",
+    "Reumatólogo",
+    "Infectólogo",
+  ];
   const [medicos, setMedicos] = useState([]);
   const [formData, setFormData] = useState({
     nombre: "",
     apellido: "",
     cedula: "",
-    especialidad: "",
-    telefono: "",
     email: "",
+    telefono: "",
+    fechaNacimiento: "",
+    especialidad: "",
+    username: "",
+    password: "",
   });
   const [search, setSearch] = useState("");
   const [isEditing, setIsEditing] = useState(false);
@@ -54,7 +78,11 @@ const RegistroMedico = () => {
           `http://localhost:3000/medicos/${editId}`,
           formData
         );
-        alert(`Médico actualizado: ${response.data.nombre} ${response.data.apellido}`);
+        if (response.status === 200) {
+          alert("Médico actualizado con éxito!");
+        } else {
+          alert("No se pudo actualizar al médico.");
+        }
       } else {
         const response = await axios.post("http://localhost:3000/medicos", formData);
         alert(`Médico registrado: ${response.data.nombre} ${response.data.apellido}`);
@@ -64,9 +92,12 @@ const RegistroMedico = () => {
         nombre: "",
         apellido: "",
         cedula: "",
-        especialidad: "",
-        telefono: "",
         email: "",
+        telefono: "",
+        fechaNacimiento: "",
+        especialidad: "",
+        username: "",
+        password: "",
       });
       setIsEditing(false);
       setEditId(null);
@@ -126,9 +157,10 @@ const RegistroMedico = () => {
               fullWidth
             />
             <TextField
-              label="Especialidad"
-              name="especialidad"
-              value={formData.especialidad}
+              label="Correo Electrónico"
+              name="email"
+              type="email"
+              value={formData.email}
               onChange={handleChange}
               required
               fullWidth
@@ -142,10 +174,44 @@ const RegistroMedico = () => {
               fullWidth
             />
             <TextField
-              label="Correo Electrónico"
-              name="email"
-              type="email"
-              value={formData.email}
+              label="Fecha de Nacimiento"
+              name="fechaNacimiento"
+              type="date"
+              value={formData.fechaNacimiento}
+              onChange={handleChange}
+              required
+              fullWidth
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+            <FormControl fullWidth required>
+              <InputLabel>Especialidad</InputLabel>
+              <Select
+                name="especialidad"
+                value={formData.especialidad}
+                onChange={handleChange}
+              >
+                {especialidades.map((esp) => (
+                  <MenuItem key={esp} value={esp}>
+                    {esp}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <TextField
+              label="Nombre de Usuario"
+              name="username"
+              value={formData.username}
+              onChange={handleChange}
+              required
+              fullWidth
+            />
+            <TextField
+              label="Contraseña"
+              name="password"
+              type="password"
+              value={formData.password}
               onChange={handleChange}
               required
               fullWidth
