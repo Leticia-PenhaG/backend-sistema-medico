@@ -4,6 +4,7 @@ import RegistroMedicos from "./pages/RegistroMedico";
 import HistorialClinico from "./pages/HistorialClinico";
 import NavBar from "./components/NavBar";
 import Inicio from "./pages/Inicio"; 
+import RegistroFichas from "./pages/RegistroFichas";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Route path="/" element={<Inicio />} />
           <Route path="/registro-pacientes" element={<RegistroPacientes />} />
           <Route path="/registro-medico" element={<RegistroMedicos />} />
+          <Route path="/registro-fichas" element={<RegistroFichas />} />
           <Route path="/historial-clinico" element={<HistorialClinico />} />
         </Routes>
       </div>

@@ -12,10 +12,13 @@ const NavBar = () => {
           Inicio
         </Button>
         <Button color="inherit" component={Link} to="/registro-pacientes">
-          Registro de Pacientes
+          Registrar Pacientes
         </Button>
         <Button color="inherit" component={Link} to="/registro-medico">
-          Registro de Médicos
+          Registrar Médicos
+        </Button>
+        <Button color="inherit" component={Link} to="/registro-fichas">
+          Registrar Fichas
         </Button>
         <Button color="inherit" component={Link} to="/historial-clinico">
           Historial Clínico
