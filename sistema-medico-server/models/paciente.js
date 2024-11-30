@@ -4,8 +4,14 @@ const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Paciente extends Model {
     static associate(models) {
+      // Asociación con FichaClinica
+      Paciente.hasMany(models.FichasClinicas, {
+        foreignKey: 'pacienteId', // Este campo usará el ID de pacientes
+        as: 'fichas',
+      });
     }
   }
+
   Paciente.init(
     {
       nombre: {

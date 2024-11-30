@@ -10,9 +10,11 @@ router.post('/', async (req, res) => {
     const ficha = await FichaClinica.create({
       pacienteId,
       medicoId,
+      detallesConsulta,  
       motivoConsulta,
       diagnostico,
       tratamiento,
+      fecha  // Se agrega fecha
     });
 
     res.status(201).json(ficha);
