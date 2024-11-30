@@ -1,36 +1,36 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 import {
-  TextField,
-  Button,
-  Paper,
   Container,
   Typography,
-  Box,
-} from "@mui/material";
-import axios from "axios";
+  Paper,
+  TextField,
+  Button,
+  MenuItem,
+} from '@mui/material';
 
 const RegistroFichas = () => {
-  const [setFichas] = useState([]);
+  const [pacientes, setPacientes] = useState([]);
+  const [medicos, setMedicos] = useState([]);
   const [formData, setFormData] = useState({
-    pacienteId: "",
-    medicoId: "",
-    fechaConsulta: "",
-    diagnostico: "",
-    tratamiento: "",
+    pacienteId: '',
+    medicoId: '',
+    fecha: new Date().toISOString().split('T')[0], // Fecha actual
+    detallesConsulta: '',
+    motivoConsulta: '',
+    diagnostico: '',
+    tratamiento: '',
   });
-  const [search, setSearch] = useState("");
-
-  const fetchFichas = async () => {
-    try {
-      const response = await axios.get("http://localhost:3000/fichas");
-      setFichas(response.data);
-    } catch (error) {
-      console.error("Error al obtener fichas:", error);
-    }
-  };
 
   useEffect(() => {
-    fetchFichas();
+    // Cargar lista de pacientes
+    axios.get('http://localhost:3000/pacientes').then((response) => {
+      setPacientes(response.data);
+    });
+    // Cargar lista de médicos
+    axios.get('http://localhost:3000/medicos').then((response) => {
+      setMedicos(response.data);
+    });
   }, []);
 
   const handleChange = (e) => {
@@ -41,94 +41,110 @@ const RegistroFichas = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post("http://localhost:3000/fichas", formData);
-      alert(`Ficha registrada: ${response.data.pacienteId}`);
+      const response = await axios.post('http://localhost:3000/fichas', formData);
+      alert(`Ficha registrada para paciente ID: ${response.data.pacienteId}`);
       setFormData({
-        pacienteId: "",
-        medicoId: "",
-        fechaConsulta: "",
-        diagnostico: "",
-        tratamiento: "",
+        pacienteId: '',
+        medicoId: '',
+        fecha: new Date().toISOString().split('T')[0],
+        detallesConsulta: '',
+        motivoConsulta: '',
+        diagnostico: '',
+        tratamiento: '',
       });
-      fetchFichas();
     } catch (error) {
-      console.error("Error al guardar ficha:", error);
-      alert("No se pudo guardar la ficha médica.");
+      console.error('Error al guardar ficha:', error);
+      alert('No se pudo guardar la ficha médica.');
     }
   };
 
   return (
     <Container>
-      <Typography variant="h4" gutterBottom>
-        Registro de Fichas Médicas
-      </Typography>
-      <Paper sx={{ padding: 2, marginBottom: 3 }}>
-        <Typography variant="h6">Registrar Ficha Médica</Typography>
+      <Typography variant="h4">Registro de Fichas Médicas</Typography>
+      <Paper style={{ padding: '20px', marginTop: '20px' }}>
         <form onSubmit={handleSubmit}>
-          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
-            <TextField
-              label="Paciente ID"
-              name="pacienteId"
-              value={formData.pacienteId}
-              onChange={handleChange}
-              required
-              fullWidth
-            />
-            <TextField
-              label="Médico ID"
-              name="medicoId"
-              value={formData.medicoId}
-              onChange={handleChange}
-              required
-              fullWidth
-            />
-            <TextField
-              label="Fecha de Consulta"
-              name="fechaConsulta"
-              type="date"
-              value={formData.fechaConsulta}
-              onChange={handleChange}
-              required
-              fullWidth
-            />
-            <TextField
-              label="Diagnóstico"
-              name="diagnostico"
-              value={formData.diagnostico}
-              onChange={handleChange}
-              required
-              fullWidth
-            />
-            <TextField
-              label="Tratamiento"
-              name="tratamiento"
-              value={formData.tratamiento}
-              onChange={handleChange}
-              required
-              fullWidth
-            />
-          </Box>
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            sx={{ marginTop: 2 }}
+          <TextField
+            label="Seleccionar Paciente"
+            name="pacienteId"
+            select
+            value={formData.pacienteId}
+            onChange={handleChange}
+            required
+            fullWidth
+            margin="normal"
           >
-            Registrar Ficha Médica
+            {pacientes.map((paciente) => (
+              <MenuItem key={paciente.id} value={paciente.id}>
+                {paciente.nombre} {paciente.apellido}
+              </MenuItem>
+            ))}
+          </TextField>
+          <TextField
+            label="Seleccionar Médico"
+            name="medicoId"
+            select
+            value={formData.medicoId}
+            onChange={handleChange}
+            required
+            fullWidth
+            margin="normal"
+          >
+            {medicos.map((medico) => (
+              <MenuItem key={medico.id} value={medico.id}>
+                {medico.nombre} {medico.apellido}
+              </MenuItem>
+            ))}
+          </TextField>
+          <TextField
+            label="Fecha"
+            name="fecha"
+            type="date"
+            value={formData.fecha}
+            onChange={handleChange}
+            fullWidth
+            margin="normal"
+            InputLabelProps={{
+              shrink: true,
+            }}
+          />
+          <TextField
+            label="Detalles de la Consulta"
+            name="detallesConsulta"
+            placeholder="Ingrese múltiples motivos separados por comas"
+            value={formData.detallesConsulta}
+            onChange={handleChange}
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            label="Motivo de Consulta"
+            name="motivoConsulta"
+            value={formData.motivoConsulta}
+            onChange={handleChange}
+            required
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            label="Diagnóstico"
+            name="diagnostico"
+            value={formData.diagnostico}
+            onChange={handleChange}
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            label="Tratamiento"
+            name="tratamiento"
+            value={formData.tratamiento}
+            onChange={handleChange}
+            fullWidth
+            margin="normal"
+          />
+          <Button type="submit" variant="contained" color="primary">
+            Registrar Ficha
           </Button>
         </form>
-      </Paper>
-
-      <Paper sx={{ padding: 2 }}>
-        <Typography variant="h6">Listado de Fichas Médicas</Typography>
-        <TextField
-          label="Buscar por ID de paciente o médico"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          fullWidth
-          sx={{ marginBottom: 2 }}
-        />
-        {/* Similar al código de médicos, aquí puedes agregar una tabla para las fichas */}
       </Paper>
     </Container>
   );
