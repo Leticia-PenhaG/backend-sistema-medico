@@ -226,7 +226,10 @@ const RegistroFichas = () => {
               <TableCell>Paciente</TableCell>
               <TableCell>Médico</TableCell>
               <TableCell>Fecha</TableCell>
-              <TableCell>Motivo</TableCell>
+              <TableCell>Detalles de la Consulta</TableCell>
+              <TableCell>Motivo de la Consulta</TableCell>
+              <TableCell>Diagnóstico</TableCell>
+              <TableCell>Tratamiento</TableCell>
               <TableCell>Acciones</TableCell>
             </TableRow>
           </TableHead>
@@ -244,23 +247,30 @@ const RegistroFichas = () => {
               .map((ficha) => (
                 <TableRow key={ficha.id}>
                   <TableCell>
-                    {
-                      pacientes.find((paciente) => paciente.id === ficha.pacienteId)?.nombre
-                    }
+                    {pacientes.find((paciente) => paciente.id === ficha.pacienteId)?.nombre}{" "}
+                    {pacientes.find((paciente) => paciente.id === ficha.pacienteId)?.apellido}
                   </TableCell>
                   <TableCell>
-                    {medicos.find((medico) => medico.id === ficha.medicoId)?.nombre}
+                    {medicos.find((medico) => medico.id === ficha.medicoId)?.nombre}{" "}
+                    {medicos.find((medico) => medico.id === ficha.medicoId)?.apellido}
                   </TableCell>
-                  <TableCell>{ficha.fecha}</TableCell>
+                  <TableCell>
+                    {new Date(ficha.fecha).toLocaleDateString("es-ES")}
+                  </TableCell>
+                  <TableCell>{ficha.detallesConsulta}</TableCell>
                   <TableCell>{ficha.motivoConsulta}</TableCell>
+                  <TableCell>{ficha.diagnostico}</TableCell>
+                  <TableCell>{ficha.tratamiento}</TableCell>
                   <TableCell>
-                    <Button variant="outlined" onClick={() => handleEdit(ficha)}>
-                      Editar
-                    </Button>
-                    <Button variant="outlined" color="error" onClick={() => handleDelete(ficha.id)}>
-                      Eliminar
-                    </Button>
-                  </TableCell>
+                    <Box sx={{ display: "flex", gap: 1 }}>
+                      <Button variant="outlined" onClick={() => handleEdit(ficha)}>
+                        Editar
+                      </Button>
+                      <Button variant="outlined" color="error" onClick={() => handleDelete(ficha.id)}>
+                        Eliminar
+                      </Button>
+                    </Box>
+                    </TableCell>
                 </TableRow>
               ))}
           </TableBody>
