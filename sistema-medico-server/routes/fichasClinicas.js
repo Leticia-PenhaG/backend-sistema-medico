@@ -2,14 +2,31 @@ const express = require('express');
 const router = express.Router();
 const { FichaClinica, Paciente, Medico } = require('../models');
 
-// Crear ficha clínica
+// Obtener todas las fichas
+router.get('/', async (req, res) => {
+  try {
+    const fichas = await FichaClinica.findAll({
+      include: [
+        { model: Paciente, as: 'paciente', attributes: ['nombre', 'apellido'] },
+        { model: Medico, as: 'medico', attributes: ['nombre', 'apellido', 'especialidad'] },
+      ],
+    });
+    res.json(fichas);
+  } catch (err) {
+    res.status(500).json({ error: 'Error al obtener las fichas' });
+  }
+});
+
+// Crear una ficha
 router.post('/', async (req, res) => {
   try {
-    const { pacienteId, medicoId, motivoConsulta, diagnostico, tratamiento } = req.body;
+    const { pacienteId, medicoId, fecha, detallesConsulta, motivoConsulta, diagnostico, tratamiento } = req.body;
 
     const ficha = await FichaClinica.create({
       pacienteId,
       medicoId,
+      fecha,
+      detallesConsulta,
       motivoConsulta,
       diagnostico,
       tratamiento,
@@ -17,32 +34,36 @@ router.post('/', async (req, res) => {
 
     res.status(201).json(ficha);
   } catch (err) {
-    res.status(400).json({ error: 'Error al crear la ficha clínica', details: err });
+    res.status(400).json({ error: 'Error al crear la ficha', details: err });
   }
 });
 
-// Obtener todas las fichas clínicas
-router.get('/', async (req, res) => {
-  try {
-    const fichas = await FichaClinica.findAll({
-      include: ['paciente', 'medico'],
-    });
-    res.json(fichas);
-  } catch (err) {
-    res.status(500).json({ error: 'Error al obtener las fichas clínicas', details: err });
-  }
-});
-
-// Obtener ficha clínica por ID
+// Obtener ficha por ID
 router.get('/:id', async (req, res) => {
   try {
     const ficha = await FichaClinica.findByPk(req.params.id, {
-      include: ['paciente', 'medico'],
+      include: [
+        { model: Paciente, as: 'paciente', attributes: ['nombre', 'apellido'] },
+        { model: Medico, as: 'medico', attributes: ['nombre', 'apellido', 'especialidad'] },
+      ],
     });
     if (!ficha) return res.status(404).json({ error: 'Ficha no encontrada' });
     res.json(ficha);
   } catch (err) {
-    res.status(500).json({ error: 'Error al obtener la ficha clínica', details: err });
+    res.status(500).json({ error: 'Error al obtener la ficha' });
+  }
+});
+
+// Eliminar ficha
+router.delete('/:id', async (req, res) => {
+  try {
+    const ficha = await FichaClinica.findByPk(req.params.id);
+    if (!ficha) return res.status(404).json({ error: 'Ficha no encontrada' });
+
+    await ficha.destroy();
+    res.status(204).send();
+  } catch (err) {
+    res.status(500).json({ error: 'Error al eliminar la ficha' });
   }
 });
 
