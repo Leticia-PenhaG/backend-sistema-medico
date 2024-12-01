@@ -182,6 +182,10 @@ const RegistroFichas = () => {
               required
               fullWidth
               InputLabelProps={{ shrink: true }}
+              inputProps={{
+                min: new Date().toISOString().split("T")[0], 
+                max: new Date().toISOString().split("T")[0], 
+              }}
             />
             <TextField
               label="Detalles de Consulta"

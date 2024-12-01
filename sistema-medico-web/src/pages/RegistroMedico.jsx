@@ -184,6 +184,9 @@ const RegistroMedico = () => {
               InputLabelProps={{
                 shrink: true,
               }}
+              inputProps={{
+                max: new Date().toISOString().split("T")[0], 
+              }}
             />
             <FormControl fullWidth required>
               <InputLabel>Especialidad</InputLabel>

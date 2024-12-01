@@ -169,6 +169,9 @@ const RegistroPacientes = () => {
               onChange={handleChange}
               required
               InputLabelProps={{ shrink: true }}
+              inputProps={{
+                max: new Date().toISOString().split("T")[0], 
+              }}
               fullWidth
             />
           </Box>
