@@ -12,6 +12,9 @@ import {
   TableCell,
   TableBody,
   Box,
+  FormControl,
+  InputLabel,
+  Select
 } from "@mui/material";
 import axios from "axios";
 
@@ -40,7 +43,7 @@ const RegistroFichas = () => {
 
   const fetchFichas = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/fichas");
+      const response = await axios.get("http://localhost:3000/fichasClinicas");
       setFichas(response.data);
     } catch (error) {
       console.error("Error al obtener fichas:", error);
@@ -72,13 +75,25 @@ const RegistroFichas = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      const orderedData = {
+        id: isEditing ? editId : undefined,
+        fecha: formData.fecha,
+        pacienteId: formData.pacienteId,
+        medicoId: formData.medicoId,
+        detallesConsulta: formData.detallesConsulta,
+        motivoConsulta: formData.motivoConsulta,
+        diagnostico: formData.diagnostico,
+        tratamiento: formData.tratamiento,
+      };
+
       if (isEditing) {
-        await axios.patch(`http://localhost:3000/fichas/${editId}`, formData);
+        await axios.patch(`http://localhost:3000/fichasClinicas/${editId}`, orderedData);
         alert("Ficha actualizada con éxito!");
       } else {
-        await axios.post("http://localhost:3000/fichas", formData);
+        await axios.post("http://localhost:3000/fichasClinicas", orderedData);
         alert("Ficha registrada con éxito!");
       }
+
       setFormData({
         pacienteId: "",
         medicoId: "",
@@ -105,7 +120,7 @@ const RegistroFichas = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:3000/fichas/${id}`);
+      await axios.delete(`http://localhost:3000/fichasClinicas/${id}`);
       fetchFichas();
     } catch (error) {
       console.error("Error al eliminar ficha:", error);
@@ -119,36 +134,38 @@ const RegistroFichas = () => {
         <Typography variant="h6">{isEditing ? "Editar Ficha" : "Registrar Ficha"}</Typography>
         <form onSubmit={handleSubmit}>
           <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
-            <TextField
-              label="Paciente"
-              name="pacienteId"
-              select
-              value={formData.pacienteId}
-              onChange={handleChange}
-              required
-              fullWidth
-            >
-              {pacientes.map((paciente) => (
-                <MenuItem key={paciente.id} value={paciente.id}>
-                  {paciente.nombre} {paciente.apellido}
-                </MenuItem>
-              ))}
-            </TextField>
-            <TextField
-              label="Médico"
-              name="medicoId"
-              select
-              value={formData.medicoId}
-              onChange={handleChange}
-              required
-              fullWidth
-            >
-              {medicos.map((medico) => (
-                <MenuItem key={medico.id} value={medico.id}>
-                  {medico.nombre} {medico.apellido}
-                </MenuItem>
-              ))}
-            </TextField>
+            <FormControl fullWidth required>
+              <InputLabel>Paciente</InputLabel>
+              <Select
+                label="Paciente"
+                name="pacienteId"
+                value={formData.pacienteId}
+                onChange={handleChange}
+              >
+                {pacientes.map((paciente) => (
+                  <MenuItem key={paciente.id} value={paciente.id}>
+                    {paciente.nombre} {paciente.apellido}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            <FormControl fullWidth required>
+              <InputLabel>Médico</InputLabel>
+              <Select
+                label="Médico"
+                name="medicoId"
+                value={formData.medicoId}
+                onChange={handleChange}
+              >
+                {medicos.map((medico) => (
+                  <MenuItem key={medico.id} value={medico.id}>
+                    {medico.nombre} {medico.apellido}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
             <TextField
               label="Fecha"
               name="fecha"
@@ -238,18 +255,10 @@ const RegistroFichas = () => {
                   <TableCell>{ficha.fecha}</TableCell>
                   <TableCell>{ficha.motivoConsulta}</TableCell>
                   <TableCell>
-                    <Button
-                      variant="outlined"
-                      color="primary"
-                      onClick={() => handleEdit(ficha)}
-                    >
+                    <Button variant="outlined" onClick={() => handleEdit(ficha)}>
                       Editar
                     </Button>
-                    <Button
-                      variant="outlined"
-                      color="error"
-                      onClick={() => handleDelete(ficha.id)}
-                    >
+                    <Button variant="outlined" color="error" onClick={() => handleDelete(ficha.id)}>
                       Eliminar
                     </Button>
                   </TableCell>
