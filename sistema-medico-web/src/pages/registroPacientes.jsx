@@ -50,14 +50,18 @@ const RegistroPacientes = () => {
   // Registrar o actualizar pacientes
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     try {
       if (isEditing) {
         const response = await axios.patch(
           `http://localhost:3000/pacientes/${editId}`,
           formData
         );
-        alert(`Paciente actualizado: ${response.data.nombre} ${response.data.apellido}`);
+        if (response.status === 200) {
+          alert("Paciente actualizado con éxito!");
+        } else {
+          alert("No se pudo actualizar el paciente.");
+        }
       } else {
         const response = await axios.post(
           "http://localhost:3000/pacientes",
@@ -65,8 +69,7 @@ const RegistroPacientes = () => {
         );
         alert(`Paciente registrado: ${response.data.nombre} ${response.data.apellido}`);
       }
-
-      // Limpiar formulario y recargar pacientes
+  
       setFormData({
         nombre: "",
         apellido: "",
@@ -85,13 +88,12 @@ const RegistroPacientes = () => {
       );
       alert(
         `No se pudo guardar el paciente. Motivo: ${
-          error.response?.data ||
-          "Error desconocido, revisa la consola para más detalles."
+          error.response?.data || "Error desconocido, revisa la consola para más detalles."
         }`
       );
     }
   };
-
+  
   const handleEdit = (paciente) => {
     setFormData(paciente);
     setIsEditing(true);
@@ -167,6 +169,9 @@ const RegistroPacientes = () => {
               onChange={handleChange}
               required
               InputLabelProps={{ shrink: true }}
+              inputProps={{
+                max: new Date().toISOString().split("T")[0], 
+              }}
               fullWidth
             />
           </Box>
@@ -216,7 +221,7 @@ const RegistroPacientes = () => {
                   <TableCell>{paciente.cedula}</TableCell>
                   <TableCell>{paciente.email}</TableCell>
                   <TableCell>{paciente.telefono}</TableCell>
-                  <TableCell>{new Date(paciente.fechanacimiento).toLocaleDateString()}</TableCell>
+                  <TableCell>{new Date(paciente.fechaNacimiento).toLocaleDateString()}</TableCell>
                   <TableCell>
                     <Box sx={{ display: "flex", gap: 1 }}>
                       <Button
