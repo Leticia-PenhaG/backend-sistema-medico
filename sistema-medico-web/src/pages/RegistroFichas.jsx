@@ -112,7 +112,15 @@ const RegistroFichas = () => {
   };
 
   const handleEdit = (ficha) => {
-    setFormData(ficha);
+    setFormData({
+      pacienteId: ficha.pacienteId,
+      medicoId: ficha.medicoId,
+      fecha: ficha.fecha.split('T')[0], 
+      detallesConsulta: ficha.detallesConsulta,
+      motivoConsulta: ficha.motivoConsulta,
+      diagnostico: ficha.diagnostico,
+      tratamiento: ficha.tratamiento,
+    });
     setIsEditing(true);
     setEditId(ficha.id);
   };
