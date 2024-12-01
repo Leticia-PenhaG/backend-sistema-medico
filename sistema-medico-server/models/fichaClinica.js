@@ -7,10 +7,12 @@ module.exports = (sequelize, DataTypes) => {
       FichaClinica.belongsTo(models.Paciente, {
         foreignKey: 'pacienteId',
         as: 'paciente',
+        onDelete: 'CASCADE', // Elimina las fichas cuando se elimina un paciente
       });
       FichaClinica.belongsTo(models.Medico, {
         foreignKey: 'medicoId',
         as: 'medico',
+        onDelete: 'CASCADE', // Elimina las fichas cuando se elimina un médico
       });
     }
   }

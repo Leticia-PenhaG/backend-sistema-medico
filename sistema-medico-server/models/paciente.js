@@ -40,5 +40,14 @@ module.exports = (sequelize, DataTypes) => {
       modelName: 'Paciente',
     }
   );
+
+    // Asociación con el modelo FichaClinica
+    Paciente.associate = (models) => {
+      Paciente.hasMany(models.FichaClinica, {
+        foreignKey: 'pacienteId',
+        as: 'fichas',
+        onDelete: 'CASCADE',  // Elimina las fichas asociadas al eliminar un paciente
+      });
+    };
   return Paciente;
 };

@@ -37,6 +37,7 @@ module.exports = (sequelize, DataTypes) => {
     Medico.hasMany(models.FichaClinica, {
       foreignKey: 'medicoId',
       as: 'fichas',
+      onDelete: 'CASCADE',
     });
   };
 
