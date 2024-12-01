@@ -76,7 +76,6 @@ const RegistroFichas = () => {
     e.preventDefault();
     try {
       const orderedData = {
-        id: isEditing ? editId : undefined,
         fecha: formData.fecha,
         pacienteId: formData.pacienteId,
         medicoId: formData.medicoId,

@@ -67,4 +67,26 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+//Editar Ficha
+router.patch('/:id', async (req, res) => {
+  try {
+    const { pacienteId, medicoId, fecha, detallesConsulta, motivoConsulta, diagnostico, tratamiento } = req.body;
+    const ficha = await FichaClinica.findByPk(req.params.id);
+    if (!ficha) return res.status(404).json({ error: 'Ficha no encontrada' });
+
+    ficha.pacienteId = pacienteId;
+    ficha.medicoId = medicoId;
+    ficha.fecha = fecha;
+    ficha.detallesConsulta = detallesConsulta;
+    ficha.motivoConsulta = motivoConsulta;
+    ficha.diagnostico = diagnostico;
+    ficha.tratamiento = tratamiento;
+
+    await ficha.save();
+    res.json(ficha); //
+  } catch (err) {
+    res.status(500).json({ error: 'Error al actualizar la ficha', details: err });
+  }
+});
+
 module.exports = router;
