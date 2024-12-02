@@ -240,7 +240,7 @@ const RegistroMedico = () => {
           fullWidth
           sx={{ marginBottom: 2 }}
         />
-        <Table>
+         <Table>
           <TableHead>
             <TableRow>
               <TableCell>Nombre</TableCell>
@@ -249,6 +249,7 @@ const RegistroMedico = () => {
               <TableCell>Especialidad</TableCell>
               <TableCell>Teléfono</TableCell>
               <TableCell>Email</TableCell>
+              <TableCell>Nombre de Usuario</TableCell>
               <TableCell>Acciones</TableCell>
             </TableRow>
           </TableHead>
@@ -267,6 +268,7 @@ const RegistroMedico = () => {
                   <TableCell>{medico.especialidad}</TableCell>
                   <TableCell>{medico.telefono}</TableCell>
                   <TableCell>{medico.email}</TableCell>
+                  <TableCell>{medico.username}</TableCell>
                   <TableCell>
                     <Box sx={{ display: "flex", gap: 1 }}>
                       <Button
