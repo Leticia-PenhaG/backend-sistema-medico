@@ -1,66 +1,50 @@
 'use strict';
-const { Model } = require('sequelize');
-
 module.exports = (sequelize, DataTypes) => {
-  class FichaClinica extends Model {
-    static associate(models) {
-      FichaClinica.belongsTo(models.Paciente, {
-        foreignKey: 'pacienteId',
-        as: 'paciente',
-      });
-      FichaClinica.belongsTo(models.Medico, {
-        foreignKey: 'medicoId',
-        as: 'medico',
-      });
-    }
-  }
-  FichaClinica.init(
-    {
-      fecha: {
-        type: DataTypes.DATEONLY,
-        allowNull: false,
-        defaultValue: DataTypes.NOW,
-      },
-      detallesConsulta: {
-        type: DataTypes.TEXT,
-        allowNull: true,
-      },
-      motivoConsulta: {
-        type: DataTypes.TEXT,
-        allowNull: false,
-      },
-      diagnostico: {
-        type: DataTypes.TEXT,
-        allowNull: false,
-      },
-      tratamiento: {
-        type: DataTypes.TEXT,
-        allowNull: false,
-      },
-      pacienteId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-          model: 'Pacientes',
-          key: 'id',
-        },
-      },
-      medicoId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-          model: 'Medicos',
-          key: 'id',
-        },
-      },
+  const FichaClinica = sequelize.define('FichaClinica', {
+    fecha: {
+      type: DataTypes.DATEONLY,
+      allowNull: false,
     },
-    {
-      sequelize,
-      modelName: 'FichaClinica',
-    }
-  );
+    detallesConsulta: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+    },
+    motivoConsulta: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    diagnostico: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    tratamiento: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    pacienteId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    medicoId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+  }, {});
+
+  // Relaciones
+  FichaClinica.associate = (models) => {
+    // Relación con Paciente
+    FichaClinica.belongsTo(models.Paciente, {
+      foreignKey: 'pacienteId',
+      as: 'paciente',
+    });
+
+    // Relación con Medico
+    FichaClinica.belongsTo(models.Medico, {
+      foreignKey: 'medicoId',
+      as: 'medico',
+    });
+  };
+
   return FichaClinica;
 };
-
-
-  

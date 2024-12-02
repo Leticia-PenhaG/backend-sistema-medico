@@ -58,16 +58,17 @@ const HistorialClinico = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true); // Activar indicador de carga
+    console.log(filters);  
+    setLoading(true); 
     try {
-      const response = await axios.get('http://localhost:3000/historialClinico', { params: filters });
-      setHistorial(response.data);
+        const response = await axios.post('http://localhost:3000/historialClinico', filters);
+        setHistorial(response.data);
     } catch (err) {
-      console.error('Error al buscar el historial clínico:', err);
+        console.error('Error al buscar el historial clínico:', err);
     } finally {
-      setLoading(false); // Desactivar indicador de carga
+        setLoading(false); 
     }
-  };
+};
 
   return (
     <Container>
@@ -77,7 +78,6 @@ const HistorialClinico = () => {
       <Paper sx={{ padding: 2 }}>
         <form onSubmit={handleSubmit}>
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-            {/* Desplegable de Paciente */}
             <FormControl fullWidth>
               <InputLabel id="paciente-label">Paciente</InputLabel>
               <Select
@@ -95,7 +95,6 @@ const HistorialClinico = () => {
               </Select>
             </FormControl>
 
-            {/* Desplegable de Médico */}
             <FormControl fullWidth>
               <InputLabel id="medico-label">Médico</InputLabel>
               <Select
@@ -113,7 +112,6 @@ const HistorialClinico = () => {
               </Select>
             </FormControl>
 
-            {/* Desplegable de Especialidad */}
             <FormControl fullWidth required>
               <InputLabel>Especialidad</InputLabel>
               <Select
@@ -130,23 +128,23 @@ const HistorialClinico = () => {
             </FormControl>
 
             <TextField
-              label="Fecha Inicio"
-              name="fechaInicio"
-              type="date"
-              value={filters.fechaInicio}
-              onChange={handleChange}
-              fullWidth
-              InputLabelProps={{ shrink: true }}
-            />
-            <TextField
-              label="Fecha Fin"
-              name="fechaFin"
-              type="date"
-              value={filters.fechaFin}
-              onChange={handleChange}
-              fullWidth
-              InputLabelProps={{ shrink: true }}
-            />
+  label="Fecha Inicio"
+  name="fechaInicio"
+  type="date"
+  value={filters.fechaInicio}
+  onChange={handleChange}
+  fullWidth
+  InputLabelProps={{ shrink: true }}
+/>
+<TextField
+  label="Fecha Fin"
+  name="fechaFin"
+  type="date"
+  value={filters.fechaFin}
+  onChange={handleChange}
+  fullWidth
+  InputLabelProps={{ shrink: true }}
+/>
             <TextField
               label="Texto en Detalles"
               name="texto"
