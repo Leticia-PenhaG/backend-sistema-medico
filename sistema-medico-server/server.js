@@ -43,6 +43,8 @@ const medicosRoutes = require("./routes/medicos");
 app.use("/medicos", medicosRoutes);
 const fichaRoutes = require("./routes/fichasClinicas"); 
 app.use("/fichasClinicas", fichaRoutes);
+const historialRoutes = require("./routes/historialClinico");
+app.use("/historial", historialRoutes); 
 
 // Iniciar el servidor
 app.listen(PORT, () => {
