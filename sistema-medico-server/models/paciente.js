@@ -4,8 +4,14 @@ const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Paciente extends Model {
     static associate(models) {
+      // Relación con FichaClinica
+      Paciente.hasMany(models.FichaClinica, {
+        foreignKey: 'pacienteId',
+        as: 'fichas',
+      });
     }
   }
+
   Paciente.init(
     {
       nombre: {
@@ -40,5 +46,6 @@ module.exports = (sequelize, DataTypes) => {
       modelName: 'Paciente',
     }
   );
+
   return Paciente;
 };

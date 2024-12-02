@@ -18,11 +18,11 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       validate: {
         isIn: [[
-                'Pediatra', 'Dermatólogo', 'Clínico', 'Cardiólogo', 
-                'Neurólogo', 'Oftalmólogo', 'Ginecólogo', 'Cirujano General',
-                'Oncólogo', 'Psiquiatra', 'Radiólogo', 'Ortopedista',
-                'Endocrinólogo', 'Reumatólogo', 'Infectólogo'
-            ]],
+          'Pediatra', 'Dermatólogo', 'Clínico', 'Cardiólogo', 
+          'Neurólogo', 'Oftalmólogo', 'Ginecólogo', 'Cirujano General',
+          'Oncólogo', 'Psiquiatra', 'Radiólogo', 'Ortopedista',
+          'Endocrinólogo', 'Reumatólogo', 'Infectólogo'
+        ]],
       },
     },
     username: {
@@ -42,4 +42,3 @@ module.exports = (sequelize, DataTypes) => {
 
   return Medico;
 };
-
